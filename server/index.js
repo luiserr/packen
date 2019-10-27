@@ -8,10 +8,11 @@ import { PORT } from "./src/constant";
 import { ApolloServer } from "apollo-server-express";
 import typeDefs from "./src/graphQl/schemas";
 import resolvers from "./src/graphQl/resolvers";
+// import Client from "./src/models/client";
 
 const app = express();
 const server = new ApolloServer({ typeDefs, resolvers });
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
   res.send("Already!");
 });
 

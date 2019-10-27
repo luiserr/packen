@@ -26,6 +26,11 @@ export default class Conection {
   ) {
     this.stringConnection = `pg://${user}:${password}@${host}:${port}/${database}?ssl=${ssl}`;
     this.client = {};
+    this.connect = this.connect.bind(this);
+    this.query = this.query.bind(this);
+    this.close = this.close.bind(this);
+    this.queryPromise = this.queryPromise.bind(this);
+    this.executeQuery = this.executeQuery.bind(this);
   }
 
   connect() {
@@ -70,6 +75,42 @@ export default class Conection {
         console.error(err);
         reject(err);
       }
+    });
+  }
+
+  queryPromise(sql, params = []) {
+    return new Promise((resolve, reject) => {
+      this.connect()
+        .then(() => {
+          this.query(sql, params)
+            .then(result => {
+              resolve(result);
+            })
+            .catch(error => {
+              reject(error);
+            });
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
+
+  executeQuery(sql, params = []) {
+    return new Promise((resolve, reject) => {
+      this.queryPromise(sql, params)
+        .then(result => {
+          this.close()
+            .then(() => {
+              resolve(result);
+            })
+            .catch(error => {
+              reject(error);
+            });
+        })
+        .catch(error => {
+          reject(error);
+        });
     });
   }
 }

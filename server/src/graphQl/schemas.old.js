@@ -16,7 +16,7 @@ type Products {
 }
 
 type Client {
-  identificacion: String
+  identification: String
   name: String
   email: String
   phone: String
@@ -40,5 +40,6 @@ type Details {
 
 type Query {
   searchClients(limite: Int): [Client]
+  findClient(identification: String!): Client
 }
 `;
