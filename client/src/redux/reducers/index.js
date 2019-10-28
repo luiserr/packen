@@ -8,7 +8,9 @@
 import { combineReducers } from 'redux';
 
 import application from './application';
+import car from './car';
 
 export default combineReducers({
-  application
+  application,
+  car
 });

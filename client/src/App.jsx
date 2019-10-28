@@ -2,11 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import './App.css';
 import Register from './components/register';
-import Store from './components/store';
+import Router from './components/routes';
 
 function App(props) {
   const { login, user } = props;
-  return <>{login ? <Register /> : <Store user={user} />}</>;
+  return <>{login ? <Register /> : <Router user={user} />}</>;
 }
 
 const mapStateToProps = state => {

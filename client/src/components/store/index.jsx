@@ -1,28 +1,40 @@
 import React, { Component } from 'react';
-import { Layout, Row, Col, Tabs, List, Avatar } from 'antd';
+import { Layout, Row, Col, Tabs, List, Avatar, Empty } from 'antd';
+import utils from '../../utils';
 import Header from './Header';
 import Footer from './Footer';
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
 
-const data = [
-  {
-    title: 'Ant Design Title 1'
-  },
-  {
-    title: 'Ant Design Title 2'
-  },
-  {
-    title: 'Ant Design Title 3'
-  },
-  {
-    title: 'Ant Design Title 4'
-  }
-];
+const { createQuery, request } = utils;
 
 export default class Store extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      brands: []
+    };
+  }
+
+  componentDidMount() {
+    request(createQuery('searchBrands', ['id, name, image']))
+      .then(response => {
+        const {
+          data: { searchBrands: brands }
+        } = response;
+        this.setState({
+          brands
+        });
+      })
+      .catch(err => console.log(err));
+  }
+
   render() {
+    const {
+      props: { history },
+      state: { brands }
+    } = this;
     return (
       <div>
         <Content>
@@ -32,21 +44,28 @@ export default class Store extends Component {
               <div style={{ backgroundColor: '#f6f7fc', minHeight: '280px', overflowY: 'scroll' }}>
                 <Row>
                   <Col span={22} offset={1} style={{ backgroundColor: '#fff', marginTop: '20px' }}>
-                    <List
-                      itemLayout="horizontal"
-                      dataSource={data}
-                      renderItem={item => (
-                        <List.Item>
-                          <List.Item.Meta
-                            avatar={
-                              <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-                            }
-                            title={<a href="https://ant.design">{item.title}</a>}
-                            description="Ant Design, a design language for background applications, is refined by Ant UED Team"
-                          />
-                        </List.Item>
-                      )}
-                    />
+                    {brands.length > 0 ? (
+                      <List
+                        itemLayout="horizontal"
+                        dataSource={brands}
+                        renderItem={brand => {
+                          return (
+                            <List.Item
+                              onClick={() => {
+                                history.push(`/products/${brand.id}`);
+                              }}
+                            >
+                              <List.Item.Meta
+                                avatar={<Avatar src={brand.image} />}
+                                title={brand.name}
+                              />
+                            </List.Item>
+                          );
+                        }}
+                      />
+                    ) : (
+                      <Empty description={<span>No hay marcas!</span>} />
+                    )}
                   </Col>
                 </Row>
               </div>
@@ -61,7 +80,7 @@ export default class Store extends Component {
               Tab 4
             </TabPane>
           </Tabs>
-          <Footer />
+          <Footer history={history} />
         </Content>
       </div>
     );

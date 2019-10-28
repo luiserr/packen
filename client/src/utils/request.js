@@ -8,7 +8,7 @@ headers.append('Content-Type', 'application/json');
  * @param {Object} data
  * @param {String} method
  */
-export function request(data, method = 'POST') {
+export function request(data = {}, method = 'POST') {
   const request = {
     method,
     headers,

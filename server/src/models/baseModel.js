@@ -20,7 +20,7 @@ export default class BaseModel {
     for (const attr in row) {
       this.attributes[attr] = row[attr];
     }
-    return this.attributes;
+    return { ...this.attributes };
   }
 
   async row(sql = "", ...params) {
@@ -39,11 +39,13 @@ export default class BaseModel {
     await this.connection
       .executeQuery(sql, [...params])
       .then(rows => {
-        result = rows.map(row => {
-          return this.mapResultToAttributes(row);
+        rows.map(row => {
+          const r = this.mapResultToAttributes(row);
+          result = [...result, r];
         });
       })
       .catch(err => console.log(err));
+    console.log(result);
     return result;
   }
 }
